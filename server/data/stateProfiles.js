@@ -1,0 +1,57 @@
+const stateProfiles = [
+  ["Karnataka", 15.3, 75.7, "tropical wet-dry", 30, 62, 2.8, "Medium", "High", 910, ["Bengaluru", "Mysuru", "Mangaluru"]],
+  ["Assam", 26.2, 92.9, "humid subtropical", 32, 78, 4.2, "High", "High", 55, ["Guwahati", "Jorhat", "Dibrugarh"]],
+  ["Maharashtra", 19.7, 75.7, "hot semi-arid/coastal", 34, 58, 3.4, "Medium", "High", 560, ["Mumbai", "Pune", "Nagpur"]],
+  ["Rajasthan", 26.9, 73.8, "hot dry desert", 39, 24, 3.1, "Low", "Extreme", 330, ["Jaipur", "Jodhpur", "Udaipur"]],
+  ["Kerala", 10.5, 76.4, "tropical monsoon", 31, 82, 3.8, "High", "High", 28, ["Kochi", "Thiruvananthapuram", "Kozhikode"]],
+  ["Tamil Nadu", 11.1, 78.7, "tropical savanna", 35, 63, 3.7, "Medium", "High", 210, ["Chennai", "Coimbatore", "Madurai"]],
+  ["Gujarat", 22.7, 71.6, "hot semi-arid", 37, 43, 4.5, "Low", "Extreme", 80, ["Ahmedabad", "Surat", "Bhuj"]],
+  ["West Bengal", 23.7, 87.9, "humid subtropical", 33, 76, 3.2, "High", "High", 18, ["Kolkata", "Siliguri", "Durgapur"]],
+  ["Odisha", 20.2, 84.5, "tropical wet-dry", 34, 72, 3.8, "High", "High", 80, ["Bhubaneswar", "Cuttack", "Puri"]],
+  ["Telangana", 17.9, 79.6, "hot semi-arid", 36, 46, 3.0, "Medium", "Extreme", 540, ["Hyderabad", "Warangal", "Nizamabad"]],
+  ["Andhra Pradesh", 15.9, 80.2, "tropical savanna/coastal", 35, 66, 4.1, "Medium", "High", 105, ["Visakhapatnam", "Vijayawada", "Tirupati"]],
+  ["Uttar Pradesh", 26.8, 80.9, "humid subtropical", 36, 52, 2.6, "Medium", "High", 110, ["Lucknow", "Varanasi", "Agra"]],
+  ["Madhya Pradesh", 23.5, 78.6, "subtropical dry", 37, 39, 2.9, "Medium", "Extreme", 520, ["Bhopal", "Indore", "Gwalior"]],
+  ["Bihar", 25.6, 85.3, "humid subtropical", 35, 67, 2.7, "Medium", "High", 53, ["Patna", "Gaya", "Muzaffarpur"]],
+  ["Punjab", 31.1, 75.3, "semi-arid subtropical", 36, 42, 3.3, "Low", "High", 250, ["Amritsar", "Ludhiana", "Jalandhar"]],
+  ["Haryana", 29.1, 76.1, "hot semi-arid", 38, 36, 3.0, "Low", "Extreme", 230, ["Gurugram", "Hisar", "Panipat"]],
+  ["Himachal Pradesh", 31.8, 77.2, "mountain temperate", 22, 56, 2.4, "Medium", "Medium", 1750, ["Shimla", "Dharamshala", "Manali"]],
+  ["Uttarakhand", 30.1, 79.0, "mountain temperate", 24, 58, 2.5, "Medium", "Medium", 1380, ["Dehradun", "Nainital", "Haridwar"]],
+  ["Goa", 15.4, 74.0, "tropical monsoon", 32, 79, 3.9, "High", "High", 25, ["Panaji", "Margao", "Vasco da Gama"]],
+  ["Jharkhand", 23.6, 85.3, "tropical wet-dry", 34, 57, 2.8, "Medium", "High", 640, ["Ranchi", "Jamshedpur", "Dhanbad"]],
+  ["Chhattisgarh", 21.3, 81.6, "tropical wet-dry", 35, 55, 2.4, "Medium", "High", 300, ["Raipur", "Bilaspur", "Durg"]],
+  ["Sikkim", 27.5, 88.5, "alpine humid", 18, 74, 2.6, "High", "Medium", 1650, ["Gangtok", "Namchi", "Pelling"]],
+  ["Arunachal Pradesh", 28.2, 94.7, "humid mountain", 24, 76, 2.9, "High", "Medium", 980, ["Itanagar", "Tawang", "Pasighat"]],
+  ["Nagaland", 26.1, 94.5, "humid subtropical hill", 25, 78, 2.8, "High", "Medium", 1050, ["Kohima", "Dimapur", "Mokokchung"]],
+  ["Manipur", 24.7, 93.9, "humid subtropical hill", 26, 75, 2.7, "High", "Medium", 790, ["Imphal", "Thoubal", "Ukhrul"]],
+  ["Mizoram", 23.2, 92.9, "humid subtropical hill", 25, 79, 3.0, "High", "Medium", 900, ["Aizawl", "Lunglei", "Champhai"]],
+  ["Tripura", 23.8, 91.3, "humid subtropical", 31, 78, 2.8, "High", "High", 35, ["Agartala", "Udaipur", "Dharmanagar"]],
+  ["Meghalaya", 25.5, 91.3, "humid high-rainfall hill", 24, 84, 3.1, "Extreme", "Medium", 1500, ["Shillong", "Cherrapunji", "Tura"]],
+  ["Jammu & Kashmir", 33.7, 75.1, "cold mountain", 15, 52, 2.2, "Medium", "Medium", 1600, ["Srinagar", "Jammu", "Gulmarg"]],
+  ["Ladakh", 34.2, 77.6, "cold arid high-altitude", 11, 21, 4.8, "Low", "High", 3500, ["Leh", "Kargil", "Nubra"]],
+  ["Delhi", 28.6, 77.2, "hot semi-arid urban", 38, 39, 2.9, "Low", "Extreme", 216, ["New Delhi", "Dwarka", "Rohini"]],
+  ["Puducherry", 11.9, 79.8, "tropical coastal", 33, 74, 4.0, "Medium", "High", 5, ["Puducherry", "Karaikal", "Yanam"]],
+  ["Chandigarh", 30.7, 76.8, "humid subtropical", 34, 48, 2.8, "Medium", "High", 321, ["Chandigarh", "Mohali", "Panchkula"]],
+  ["Lakshadweep", 10.6, 72.6, "tropical maritime", 31, 83, 5.6, "High", "High", 2, ["Kavaratti", "Agatti", "Minicoy"]],
+  ["Andaman & Nicobar Islands", 11.7, 92.7, "tropical maritime", 30, 84, 5.0, "High", "High", 12, ["Port Blair", "Havelock", "Car Nicobar"]],
+  ["Dadra & Nagar Haveli and Daman & Diu", 20.2, 73.0, "tropical coastal", 34, 68, 3.6, "Medium", "High", 30, ["Daman", "Silvassa", "Diu"]]
+].map(([name, lat, lng, climate, temperature, humidity, wind, rainfall, solar, elevation, cities]) => ({
+  name, lat, lng, climate, temperature, humidity, wind, rainfall, solar, elevation, cities
+}));
+
+const demoCities = [
+  ["Guwahati", "Assam", "Kamrup Metropolitan", 26.1445, 91.7362, 55],
+  ["Mysuru", "Karnataka", "Mysuru", 12.2958, 76.6394, 770],
+  ["Bengaluru", "Karnataka", "Bengaluru Urban", 12.9716, 77.5946, 920],
+  ["Jaipur", "Rajasthan", "Jaipur", 26.9124, 75.7873, 431],
+  ["Leh", "Ladakh", "Leh", 34.1526, 77.5771, 3524],
+  ["Kochi", "Kerala", "Ernakulam", 9.9312, 76.2673, 3],
+  ["Delhi", "Delhi", "New Delhi", 28.6139, 77.2090, 216],
+  ["Shillong", "Meghalaya", "East Khasi Hills", 25.5788, 91.8933, 1496],
+  ["Mumbai", "Maharashtra", "Mumbai", 19.0760, 72.8777, 14],
+  ["Jorhat", "Assam", "Jorhat", 26.7465, 94.2026, 116]
+].map(([name, state, district, lat, lng, elevation]) => ({
+  name, state, district, lat, lng, elevation
+}));
+
+module.exports = { stateProfiles, demoCities };

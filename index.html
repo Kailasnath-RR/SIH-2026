@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHELTR.AI | Geographic Climate Analysis & Parametric Shelter Generator</title>
+  <meta name="description" content="Location-aware geographic climate analysis and parametric architectural shelter generator for India.">
+  <link rel="stylesheet" href="style.css?v=40">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
+  <script type="module" src="src/app.js?v=40" defer></script>
+</head>
+<body>
+  <div class="ambient-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#explore" aria-label="SHELTR.AI home">
+      <span class="brand-mark"></span>
+      <span>SHELTR<span>.AI</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#explore" class="active">1. Explore Map</a>
+      <a href="#analyze">2. Analyze</a>
+      <a href="#design">3. Design</a>
+      <a href="#studio">4. 3D Studio</a>
+      <a href="#reports">5. Reports</a>
+      <a href="#limitations">6. Limitations</a>
+    </nav>
+    <div class="system-strip" aria-label="System status">
+      <span id="navLocation">Guwahati</span>
+      <span class="status-dot"></span>
+      <span id="systemDataBadge" class="badge badge-success">Open-Meteo + Demo Fallback</span>
+      <span class="ai-pill">GIS + 3D Engine</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="explore">
+      <div class="india-orbit" aria-hidden="true">
+        <svg viewBox="0 0 320 360" role="img" aria-label="Animated India geographic visualization">
+          <path d="M138 24 176 47 195 83 233 95 255 128 238 164 252 199 222 226 215 270 179 294 159 338 126 304 90 281 74 244 45 215 61 181 53 135 88 101 63Z"></path>
+          <path d="M142 57 166 75 177 111 211 126 201 163 215 195 184 213 177 249 151 269 131 247 100 238 87 198 94 164 83 132 116 108Z"></path>
+          <circle cx="150" cy="147" r="3"></circle><circle cx="119" cy="194" r="3"></circle><circle cx="181" cy="221" r="3"></circle>
+        </svg>
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">Geographic Climate Analysis & Parametric Shelter Generator</p>
+        <h1>Design shelters directly from real environmental data.</h1>
+        <p>Explore India's climate with real state boundary geometry, interactive choropleth heatmaps, and live weather. Observe location parameters generate parametric architectural shelter geometry in real-time.</p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#mapWorkspace">Explore India Map</a>
+          <a class="secondary-action" href="#studio">Open 3D Studio</a>
+        </div>
+      </div>
+      <aside class="source-panel" aria-label="Data source status">
+        <h2>System Components</h2>
+        <div><span>GIS Map Renderer</span><strong class="text-cyan">Leaflet + Real GeoJSON</strong></div>
+        <div><span>Climate Data Provider</span><strong class="text-cyan">Open-Meteo API / Demo</strong></div>
+        <div><span>3D Generator</span><strong class="text-cyan">Parametric Three.js</strong></div>
+        <div><span>Rule Engine</span><strong class="text-cyan">Explicit Triggers v2.0</strong></div>
+      </aside>
+    </section>
+
+    <!-- WORKFLOW STRIP -->
+    <div class="workflow-strip glass">
+      <div class="step active"><span>1</span> Location Map</div>
+      <div class="step-line"></div>
+      <div class="step"><span>2</span> Climate Analysis</div>
+      <div class="step-line"></div>
+      <div class="step"><span>3</span> Design Engine</div>
+      <div class="step-line"></div>
+      <div class="step"><span>4</span> Parametric 3D Studio</div>
+      <div class="step-line"></div>
+      <div class="step"><span>5</span> Report Export</div>
+    </div>
+
+    <!-- MAP WORKSPACE -->
+    <section class="map-workspace" id="mapWorkspace" aria-labelledby="mapTitle">
+      <div class="section-heading">
+        <p class="eyebrow">Geographic Explorer</p>
+        <h2 id="mapTitle">India GIS Location Explorer</h2>
+        <p>Real state polygons, choropleth heatmaps, city markers, and explicit custom coordinate tracking.</p>
+      </div>
+
+      <div class="workspace-grid">
+        <aside class="left-panel glass">
+          <label for="locationSearch">Search Location or Lat, Lng</label>
+          <div class="search-row">
+            <input id="locationSearch" type="search" placeholder="Guwahati, Mysuru, Jaipur, 12.2958, 76.6394" autocomplete="off">
+            <button id="searchButton" type="button">Search</button>
+          </div>
+          <div id="searchResults" class="search-results" role="listbox"></div>
+
+          <div class="mode-tabs" role="tablist" aria-label="Choropleth climate heatmap metrics">
+            <button class="metric-tab active" data-metric="temperature" type="button">Temperature</button>
+            <button class="metric-tab" data-metric="humidity" type="button">Humidity</button>
+            <button class="metric-tab" data-metric="rainfall" type="button">Rainfall</button>
+            <button class="metric-tab" data-metric="stress" type="button">Thermal Stress</button>
+            <button class="metric-tab" data-metric="solar" type="button">Solar Exposure</button>
+          </div>
+
+          <div class="layer-groups">
+            <h3>Map Layers</h3>
+            <label><input type="checkbox" data-layer="cities" checked> Major Cities</label>
+            <label><input type="checkbox" data-layer="rivers" checked> Rivers (Demo Layer)</label>
+            <label><input type="checkbox" data-layer="terrain" checked> Terrain Styling</label>
+            <label class="disabled-layer"><input type="checkbox" disabled> Roads <span class="badge badge-warning">Data source required</span></label>
+            <label class="disabled-layer"><input type="checkbox" disabled> Forest <span class="badge badge-warning">Data source required</span></label>
+          </div>
+        </aside>
+
+        <div class="map-panel glass">
+          <div class="map-toolbar">
+            <div>
+              <strong id="mapBreadcrumb">India</strong>
+              <span id="mapSubline">Hover polygons for state climate data. Click state or city to zoom.</span>
+            </div>
+            <div class="map-zoom-actions">
+              <button id="zoomInMap" type="button" title="Zoom in">+</button>
+              <button id="zoomOutMap" type="button" title="Zoom out">−</button>
+              <button id="resetMap" type="button">Reset View</button>
+            </div>
+          </div>
+
+          <!-- Leaflet GIS Map Container -->
+          <div id="leafletMap" class="leaflet-map-container"></div>
+
+          <!-- Dynamic Choropleth Heatmap Legend -->
+          <div id="mapLegend" class="choropleth-legend glass"></div>
+        </div>
+
+        <aside class="right-panel glass">
+          <p class="eyebrow">Selected Site Intelligence</p>
+          <h2 id="selectedName">Guwahati</h2>
+          <div id="selectedProvenance" class="provenance-container"></div>
+          <dl class="site-meta">
+            <div><dt>State</dt><dd id="selectedState">Assam</dd></div>
+            <div><dt>District</dt><dd id="selectedDistrict">Kamrup Metropolitan</dd></div>
+            <div><dt>Latitude</dt><dd id="selectedLat">26.1445</dd></div>
+            <div><dt>Longitude</dt><dd id="selectedLng">91.7362</dd></div>
+            <div><dt>Elevation</dt><dd id="selectedElev">55 m</dd></div>
+            <div><dt>Climate Zone</dt><dd id="selectedClimate">humid subtropical</dd></div>
+          </dl>
+          <button id="analyzeButton" class="primary-action wide" type="button">Analyze & Generate 3D Shelter</button>
+        </aside>
+      </div>
+
+      <div id="siteContextPanel" class="site-context-wrapper margin-top-1rem"></div>
+    </section>
+
+    <!-- ANALYSIS WORKSPACE -->
+    <section class="analysis-section" id="analyze">
+      <div class="section-heading">
+        <p class="eyebrow">Calculated Engineering Metrics</p>
+        <h2>Environmental Comfort & Stress Analysis</h2>
+        <p>Deterministic calculations with 5-factor thermal comfort breakdown and explicit assumptions.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <article class="score-card glass">
+          <span>Thermal Comfort Score</span>
+          <strong id="thermalScore">-- / 100</strong>
+          <em id="thermalBand">Awaiting location</em>
+        </article>
+        <article class="score-card glass">
+          <span>Climate Adaptation Score</span>
+          <strong id="designScore">-- / 100</strong>
+          <em>Updates dynamically with 3D parameters</em>
+        </article>
+        <article class="score-card glass">
+          <span>Recommended Shelter</span>
+          <strong id="shelterType">Climate-ready shelter</strong>
+          <em id="dataQuality">Data provenance: High</em>
+        </article>
+      </div>
+
+      <div class="cards-grid" id="envCards"></div>
+      <div id="comfortBreakdown" class="glass breakdown-panel margin-y-1rem"></div>
+      <div id="assumptionsPanel" class="margin-y-1rem"></div>
+
+      <div class="analytics-grid">
+        <div class="glass chart-panel">
+          <div class="panel-title">
+            <span>Diurnal Climate Profile</span>
+            <div id="chartStatus" class="chart-status"></div>
+          </div>
+          <canvas id="climateChart" width="900" height="360" aria-label="24-hour hourly climate chart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN BRIEF & RULES WORKSPACE -->
+    <section class="design-section" id="design">
+      <div class="section-heading">
+        <p class="eyebrow">Rule-Based Decision Support Engine</p>
+        <h2>Climate-Responsive Design Rationale</h2>
+        <p>Every recommendation links its physical climate trigger, reason, expected benefit, and confidence rating.</p>
+      </div>
+
+      <div class="design-grid">
+        <div class="brief-panel">
+          <h3>Recommendation Brief</h3>
+          <div id="briefContent"></div>
+        </div>
+        <div class="parameters-panel">
+          <h3>Weighted Climate Adaptation Breakdown</h3>
+          <div id="scoreBreakdown"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARAMETRIC 3D SHELTER GENERATOR -->
+    <section class="studio-section" id="studio">
+      <div class="section-heading">
+        <p class="eyebrow">Coherent Architectural Generator</p>
+        <h2>Parametric 3D Shelter Studio</h2>
+        <p>Foundations, floor plates, framed wall panels, real roof geometries (flat, sloped gable, double roof), louvers, overhang eaves, raised stilts, material shaders, and animated climate vectors.</p>
+      </div>
+
+      <div class="studio-grid">
+        <div class="glass studio-view">
+          <div class="studio-toolbar">
+            <div>
+              <strong id="studioTitle">Sloped Climate-Adapted Shelter</strong>
+              <span id="simulationLabel">Drag to rotate model. Scroll to zoom.</span>
+            </div>
+            <div>
+              <button id="resetCamera" type="button">Reset Camera</button>
+              <button id="simulateClimate" type="button">Simulate Climate</button>
+              <button id="beforeAfter" type="button">Before / After</button>
+            </div>
+          </div>
+
+          <canvas id="shelterCanvas"></canvas>
+
+          <!-- Compass Orientation Rose & Solar Legend -->
+          <div class="compass-rose glass">
+            <span class="compass-north">N ↑</span>
+            <span class="compass-axis">East-West Long Axis</span>
+          </div>
+
+          <div class="simulation-legend glass">
+            <span>Conceptual Climate Response:</span>
+            <span>☀ Sun Trajectory</span>
+            <span>→ Airflow Particles</span>
+            <span>↓ Rain Runoff</span>
+          </div>
+
+          <div class="rotate-hint" aria-hidden="true">Drag to rotate | Scroll to zoom</div>
+          <div id="webglFallback" class="webgl-fallback">3D engine loading...</div>
+        </div>
+
+        <aside class="glass control-panel">
+          <h3>Real-Time Architectural Overrides ("What-If?" Exploration)</h3>
+          <label>Roof Geometry<select id="roofControl"><option>Sloped</option><option>Double roof</option><option>Flat</option></select></label>
+          <label>Ventilation Strategy<select id="ventControl"><option>High</option><option>Medium</option><option>Low</option></select></label>
+          <label>Shading Devices<select id="shadeControl"><option>High</option><option>Medium</option><option>Low</option></select></label>
+          <label>Window Opening Size<select id="openingControl"><option>Large</option><option>Medium</option><option>Small</option></select></label>
+          <label>Roof Overhang Eave Projection <output id="overhangValue">1.5 m</output><input id="overhangControl" type="range" min="0.2" max="2.2" step="0.1" value="1.5"></label>
+          <label class="toggle-row"><input id="raisedControl" type="checkbox" checked> Raised floor stilts</label>
+          <label>Material Finish<select id="materialControl"><option>Climate Recommended</option><option>Lightweight bamboo composite</option><option>Compressed earth block (CEB)</option><option>Insulated steel panel</option></select></label>
+        </aside>
+      </div>
+    </section>
+
+    <!-- REPORTS & COMPARISON WORKSPACE -->
+    <section class="reports-section" id="reports">
+      <div class="section-heading">
+        <p class="eyebrow">Comparison & Export</p>
+        <h2>Multi-Location Comparison & HTML Report</h2>
+        <p>Side-by-side location comparison table and exportable HTML design report.</p>
+      </div>
+
+      <div class="report-grid">
+        <div class="glass comparison-panel">
+          <h3>Multi-Location Comparison</h3>
+          <div class="compare-selects">
+            <select id="compareA"></select>
+            <select id="compareB"></select>
+          </div>
+          <div id="compareOutput"></div>
+        </div>
+
+        <div class="glass report-panel">
+          <h3>Report Export</h3>
+          <p id="reportSummary">Generates a complete HTML report containing location, climate data, 5-factor analysis, design rationale, score breakdown, site context, materials evaluation, and limitations disclaimers.</p>
+          <button id="exportReport" class="primary-action wide" type="button">Export HTML Report</button>
+          <p class="disclaimer">Report Title: Conceptual Climate-Adaptive Design Report. Recommendations require professional architectural/engineering validation before construction.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIMITATIONS SECTION -->
+    <section class="limitations-section" id="limitations">
+      <div class="section-heading">
+        <p class="eyebrow">Model Scope & Limitations</p>
+        <h2>Engineering Scope & Disclaimers</h2>
+        <p>SHELTR.AI provides conceptual decision support. It does not replace site-specific structural or mechanical engineering validation.</p>
+      </div>
+
+      <div class="limitations-grid glass">
+        <div class="lim-card">
+          <h3>GIS & Boundary Data</h3>
+          <p>State polygons and boundaries are rendered from bundled GeoJSON dataset. Custom coordinates inherit regional centroid climate profiles when unlisted.</p>
+        </div>
+        <div class="lim-card">
+          <h3>Thermal Comfort Model</h3>
+          <p>Thermal comfort scoring uses a 5-factor Steadman Heat Index heuristic model. It is NOT an ASHRAE-55 or ISO-7730 PMV calculation.</p>
+        </div>
+        <div class="lim-card">
+          <h3>3D Parametric Model</h3>
+          <p>The 3D studio visualizes architectural parameters (louvers, gables, eaves, stilts, materials) and conceptual climate flow vectors. It is NOT a CFD or FEA physics simulation.</p>
+        </div>
+        <div class="lim-card">
+          <h3>Structural Safety</h3>
+          <p>Material suitability and structural bracing rules are indicative guidelines. Construction requires site soil testing and certified structural sign-off.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- AI ASSISTANT MODAL -->
+  <button class="assistant-button" id="assistantButton" type="button">Ask the Shelter AI</button>
+  <section class="assistant-panel glass" id="assistantPanel" aria-label="Shelter AI assistant" hidden>
+    <button id="closeAssistant" type="button" aria-label="Close assistant">Close</button>
+    <h2>Ask the Shelter AI</h2>
+    <p class="assistant-sub">Answers based ONLY on current location, climate data, engineering metrics, and active design parameters.</p>
+    <div id="chatLog" class="chat-log"></div>
+    <div class="chat-row">
+      <input id="chatInput" type="text" placeholder="Why did you recommend a sloped roof?">
+      <button id="chatSend" type="button">Ask</button>
+    </div>
+  </section>
+</body>
+</html>
