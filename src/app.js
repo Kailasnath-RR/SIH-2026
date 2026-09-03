@@ -1,7 +1,7 @@
 import { appState } from "./core/state.js";
 import { demoCities } from "./core/constants.js";
 import { apiClient } from "./services/apiClient.js";
-import { initMap, renderGeoJSONLayer, selectLocation, selectState, findState } from "./ui/map.js";
+import { initMap, renderGeoJSONLayer, selectCoordinates, selectState, findState, filterFacilityMarkers, searchNominatim } from "./ui/map.js";
 import { renderAnalysis } from "./ui/analysis.js";
 import { renderDesign } from "./ui/design.js";
 import { initStudio, updateShelterGeometry } from "./ui/studio.js";
@@ -76,11 +76,20 @@ function bindGlobalEvents() {
   });
 
   // Layer checkboxes on map panel
-  document.querySelectorAll(".layer-groups input:not(:disabled)").forEach(chk => {
+  document.querySelectorAll(".layer-groups input[data-layer]:not(:disabled)").forEach(chk => {
     chk.addEventListener("change", e => {
       const layer = e.target.dataset.layer;
       appState.activeLayers[layer] = e.target.checked;
       renderGeoJSONLayer();
+    });
+  });
+
+  // Facility type filter checkboxes
+  document.querySelectorAll("input[data-facility]").forEach(chk => {
+    chk.addEventListener("change", e => {
+      const facilityType = e.target.dataset.facility;
+      appState.facilityFilters[facilityType] = e.target.checked;
+      filterFacilityMarkers();
     });
   });
 
@@ -156,22 +165,20 @@ async function handleSearch() {
     return;
   }
 
-  const results = await apiClient.searchLocation(q);
+  const results = await apiClient.geocodeSearch(q);
   resultsContainer.innerHTML = results.map((r, i) => `
     <button class="result-item" data-index="${i}" type="button">
       <strong>${r.name}</strong><br>
-      <small>${r.district}, ${r.state}</small>
-      <span class="prov-badge-sm">${r.dataType || "Estimated"}</span>
+      <small>${r.admin1 || r.country || ""}</small>
+      <span class="prov-badge-sm">Geocoded</span>
     </button>
   `).join("");
 
   document.querySelectorAll(".result-item").forEach((btn, i) => {
     btn.addEventListener("click", () => {
       const loc = results[i];
-      const stateObj = findState(loc.state);
-      if (stateObj) selectState(stateObj);
-      selectLocation(loc);
-      analyzeCurrentLocation();
+      // Zoom and fetch intelligence
+      selectCoordinates(loc.latitude, loc.longitude, 10);
       resultsContainer.innerHTML = "";
     });
   });
@@ -185,17 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initAssistant();
   initReportExport();
 
-  // Initial Location: Guwahati
-  selectLocation({
-    name: demoCities[0].name,
-    state: demoCities[0].state,
-    district: demoCities[0].district,
-    lat: demoCities[0].lat,
-    lng: demoCities[0].lng,
-    elevation: demoCities[0].elevation,
-    dataType: "Site-specific city data",
-    confidence: "High (Site-specific)"
-  });
+  // Initial Location: Visakhapatnam
+  selectCoordinates(17.6868, 83.2185, 12);
 
   analyzeCurrentLocation();
 

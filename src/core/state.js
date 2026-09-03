@@ -31,6 +31,15 @@ export const appState = {
     roads: true,
     forest: true
   },
+  facilityMarkers: [],
+  userLocationMarker: null,
+  facilityFilters: {
+    shelter: true,
+    hospital: true,
+    relief: true,
+    food: true,
+    disaster: true
+  },
   three: null,
   simulating: false,
   beforeAfter: false,

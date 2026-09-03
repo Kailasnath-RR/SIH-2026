@@ -177,6 +177,104 @@ input:focus, select:focus { border-color: var(--cyan); }
 .legend-bar { height: 10px; border-radius: 5px; width: 180px; margin: 0.2rem 0; border: 1px solid rgba(255,255,255,0.2); }
 .legend-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
 
+/* ── Facility Marker Pin ── */
+.facility-marker { background: none !important; border: none !important; }
+.fm-pin {
+  position: relative;
+  width: 34px; height: 42px;
+  display: flex; align-items: flex-start; justify-content: center;
+  filter: drop-shadow(0 0 8px var(--fm-color));
+}
+.fm-pin::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 50%;
+  width: 28px; height: 28px;
+  transform: translateX(-50%);
+  background: rgba(5, 12, 19, 0.92);
+  border: 2px solid var(--fm-color);
+  border-radius: 50% 50% 50% 0;
+  transform: translateX(-50%) rotate(-45deg);
+  box-shadow: 0 0 12px var(--fm-color);
+}
+.fm-icon {
+  position: relative; z-index: 2;
+  font-size: 14px; line-height: 28px;
+  text-align: center; width: 28px;
+}
+
+/* ── Cluster Icons ── */
+.fm-cluster-icon { background: none !important; border: none !important; }
+.fm-cluster {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(85, 229, 211, 0.18);
+  border: 2px solid rgba(85, 229, 211, 0.6);
+  box-shadow: 0 0 18px rgba(85, 229, 211, 0.3);
+  color: var(--cyan); font-weight: 800; font-size: 0.85rem;
+}
+.fm-cluster-medium { width: 48px; height: 48px; font-size: 0.95rem; background: rgba(255, 209, 102, 0.18); border-color: rgba(255, 209, 102, 0.6); color: var(--amber); box-shadow: 0 0 18px rgba(255, 209, 102, 0.3); }
+.fm-cluster-large { width: 56px; height: 56px; font-size: 1.05rem; background: rgba(255, 107, 143, 0.18); border-color: rgba(255, 107, 143, 0.6); color: var(--rose); box-shadow: 0 0 18px rgba(255, 107, 143, 0.3); }
+
+/* ── Facility Popup Card ── */
+.facility-popup { min-width: 200px; }
+.fp-header { border-left: 3px solid; padding-left: 0.6rem; margin-bottom: 0.5rem; }
+.fp-type { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.15rem; }
+.fp-name { display: block; font-size: 0.95rem; color: var(--text); }
+.fp-row { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px solid rgba(141, 232, 218, 0.1); font-size: 0.8rem; }
+.fp-row span { color: var(--muted); }
+.fp-row strong { color: var(--text); }
+.fp-coords strong { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.75rem; }
+
+/* ── Site Intelligence Panel ── */
+.si-section { margin-top: 1.2rem; margin-bottom: 1.2rem; }
+.si-header { font-size: 0.75rem; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.8rem; border-bottom: 1px solid var(--line); padding-bottom: 0.3rem; text-transform: uppercase; }
+.si-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.25rem 0; }
+.si-row span { color: var(--muted); }
+.si-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.si-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
+.si-card { background: rgba(5, 12, 19, 0.5); border: 1px solid var(--line); padding: 0.5rem; text-align: center; border-radius: 4px; display: flex; flex-direction: column; justify-content: center; }
+.si-card-large { background: rgba(85, 229, 211, 0.05); border: 1px solid rgba(85, 229, 211, 0.2); padding: 0.8rem; border-radius: 6px; }
+.si-card-large strong { display: block; margin-bottom: 0.5rem; color: var(--cyan); }
+.si-val { font-size: 1.1rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+.si-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; }
+.si-stat { text-align: center; padding: 0.4rem 0; background: rgba(255,255,255,0.03); border-radius: 4px; }
+.si-stat strong { display: block; font-size: 1.2rem; color: var(--cyan); }
+.si-stat span { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; }
+.si-text { font-size: 0.85rem; color: var(--muted); line-height: 1.4; }
+.si-source { font-size: 0.65rem; color: var(--muted); text-align: right; margin-top: 0.4rem; font-style: italic; }
+.si-loading-pulse { animation: pulse 1.5s infinite ease-in-out; }
+@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+/* ── User Location Marker ── */
+.user-loc-marker { background: none !important; border: none !important; }
+.ulm-dot {
+  width: 16px; height: 16px;
+  background: #4A90D9;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(74, 144, 217, 0.6);
+  position: relative;
+}
+.ulm-pulse {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 40px; height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  background: rgba(74, 144, 217, 0.25);
+  animation: ulmPulse 2s ease-out infinite;
+}
+@keyframes ulmPulse {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ── Override default MarkerCluster styles for dark theme ── */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background: none !important; }
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background: none !important; }
+
 .site-meta { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin: 1.2rem 0; }
 .site-meta div { border: 1px solid var(--line); padding: .7rem; }
 .site-meta dt { color: var(--muted); font-size: .67rem; text-transform: uppercase; }

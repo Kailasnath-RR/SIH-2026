@@ -25,6 +25,7 @@ const materialService = require("./server/services/materialService");
 const aiService = require("./server/services/aiService");
 const reportService = require("./server/services/reportService");
 const elevationService = require("./server/services/elevationService");
+const siteIntelligenceService = require("./server/services/siteIntelligenceService");
 
 const ROOT = __dirname;
 const START_PORT = Number(process.env.PORT) || 4174;
@@ -138,6 +139,65 @@ const server = http.createServer(async (req, res) => {
       const q = reqUrl.searchParams.get("q") || "";
       const results = locationService.search(q);
       return sendJson(res, 200, { results });
+    }
+
+    if (req.method === "GET" && pathname === "/api/geocode/search") {
+      const q = reqUrl.searchParams.get("q") || "";
+      try {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=en&format=json`;
+        const mod = require("https");
+        const fetchJson = (u) => new Promise((resolve, reject) => {
+          mod.get(u, (resp) => {
+            let data = "";
+            resp.on("data", chunk => data += chunk);
+            resp.on("end", () => {
+              try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
+            });
+          }).on("error", reject);
+        });
+        const geocodeData = await fetchJson(url);
+        return sendJson(res, 200, { results: geocodeData.results || [] });
+      } catch (e) {
+        return sendJson(res, 500, { error: e.message });
+      }
+    }
+
+    if (req.method === "GET" && pathname === "/api/site-intelligence") {
+      const lat = Number(reqUrl.searchParams.get("lat"));
+      const lng = Number(reqUrl.searchParams.get("lng"));
+      if (isNaN(lat) || isNaN(lng)) return sendJson(res, 400, { error: "Invalid coordinates" });
+      const intelligence = await siteIntelligenceService.getIntelligence(lat, lng);
+      return sendJson(res, 200, intelligence);
+    }
+
+    // Mock facility locations endpoint (backend-ready)
+    if (req.method === "GET" && pathname === "/api/locations") {
+      const typeFilter = reqUrl.searchParams.get("type") || "";
+      const stateFilter = reqUrl.searchParams.get("state") || "";
+
+      const allLocations = [
+        { id: "shelter-001", name: "Government School Shelter", type: "shelter", latitude: 12.9716, longitude: 77.5946, capacity: 500, occupied: 320, status: "available", state: "Karnataka", district: "Bengaluru Urban" },
+        { id: "shelter-002", name: "Community Hall Relief Shelter", type: "shelter", latitude: 26.1445, longitude: 91.7362, capacity: 300, occupied: 280, status: "near-full", state: "Assam", district: "Kamrup Metropolitan" },
+        { id: "shelter-003", name: "Municipal Stadium Shelter", type: "shelter", latitude: 19.0760, longitude: 72.8777, capacity: 1000, occupied: 450, status: "available", state: "Maharashtra", district: "Mumbai" },
+        { id: "hospital-001", name: "District General Hospital", type: "hospital", latitude: 12.9352, longitude: 77.6245, capacity: 200, occupied: 145, status: "operational", state: "Karnataka", district: "Bengaluru Urban" },
+        { id: "hospital-002", name: "Civil Hospital Guwahati", type: "hospital", latitude: 26.1867, longitude: 91.7460, capacity: 350, occupied: 310, status: "near-full", state: "Assam", district: "Kamrup Metropolitan" },
+        { id: "hospital-003", name: "Rajasthan State Hospital", type: "hospital", latitude: 26.9124, longitude: 75.7873, capacity: 400, occupied: 180, status: "operational", state: "Rajasthan", district: "Jaipur" },
+        { id: "relief-001", name: "NDRF Relief Center", type: "relief", latitude: 22.5726, longitude: 88.3639, capacity: 800, occupied: 350, status: "active", state: "West Bengal", district: "Kolkata" },
+        { id: "relief-002", name: "State Disaster Relief Hub", type: "relief", latitude: 13.0827, longitude: 80.2707, capacity: 600, occupied: 200, status: "active", state: "Tamil Nadu", district: "Chennai" },
+        { id: "food-001", name: "Central Food Distribution Point", type: "food", latitude: 28.6139, longitude: 77.2090, capacity: 2000, occupied: 0, status: "active", state: "Delhi", district: "New Delhi" },
+        { id: "food-002", name: "Community Kitchen Center", type: "food", latitude: 9.9312, longitude: 76.2673, capacity: 1500, occupied: 0, status: "active", state: "Kerala", district: "Ernakulam" },
+        { id: "food-003", name: "Flood Relief Kitchen", type: "food", latitude: 25.6093, longitude: 85.1376, capacity: 1000, occupied: 0, status: "active", state: "Bihar", district: "Patna" },
+        { id: "disaster-001", name: "Flood Affected Zone - Brahmaputra", type: "disaster", latitude: 26.7465, longitude: 94.2026, severity: "high", status: "active", state: "Assam", district: "Jorhat" },
+        { id: "disaster-002", name: "Cyclone Impact Area", type: "disaster", latitude: 20.2961, longitude: 85.8245, severity: "critical", status: "active", state: "Odisha", district: "Bhubaneswar" },
+        { id: "disaster-003", name: "Landslide Warning Zone", type: "disaster", latitude: 30.3165, longitude: 78.0322, severity: "moderate", status: "monitoring", state: "Uttarakhand", district: "Dehradun" },
+        { id: "shelter-004", name: "Cyclone Shelter Visakhapatnam", type: "shelter", latitude: 17.6868, longitude: 83.2185, capacity: 700, occupied: 120, status: "available", state: "Andhra Pradesh", district: "Visakhapatnam" }
+      ];
+
+      let filtered = allLocations;
+      if (typeFilter) filtered = filtered.filter(l => l.type === typeFilter);
+      if (stateFilter) filtered = filtered.filter(l => l.state.toLowerCase() === stateFilter.toLowerCase());
+
+      return sendJson(res, 200, { locations: filtered });
     }
 
     if (req.method === "GET" && pathname === "/api/climate") {

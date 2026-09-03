@@ -49,3 +49,25 @@ export const demoCities = [
   ["Mumbai", "Maharashtra", "Mumbai", 19.0760, 72.8777, 14],
   ["Jorhat", "Assam", "Jorhat", 26.7465, 94.2026, 116]
 ].map(([name, state, district, lat, lng, elevation]) => ({ name, state, district, lat, lng, elevation }));
+
+/**
+ * Mock facility locations for the interactive map marker system.
+ * Structure is backend-ready: replace with fetch('/api/locations') later.
+ */
+export const mockFacilityLocations = [
+  { id: "shelter-001", name: "Government School Shelter", type: "shelter", latitude: 12.9716, longitude: 77.5946, capacity: 500, occupied: 320, status: "available", state: "Karnataka", district: "Bengaluru Urban" },
+  { id: "shelter-002", name: "Community Hall Relief Shelter", type: "shelter", latitude: 26.1445, longitude: 91.7362, capacity: 300, occupied: 280, status: "near-full", state: "Assam", district: "Kamrup Metropolitan" },
+  { id: "shelter-003", name: "Municipal Stadium Shelter", type: "shelter", latitude: 19.0760, longitude: 72.8777, capacity: 1000, occupied: 450, status: "available", state: "Maharashtra", district: "Mumbai" },
+  { id: "hospital-001", name: "District General Hospital", type: "hospital", latitude: 12.9352, longitude: 77.6245, capacity: 200, occupied: 145, status: "operational", state: "Karnataka", district: "Bengaluru Urban" },
+  { id: "hospital-002", name: "Civil Hospital Guwahati", type: "hospital", latitude: 26.1867, longitude: 91.7460, capacity: 350, occupied: 310, status: "near-full", state: "Assam", district: "Kamrup Metropolitan" },
+  { id: "hospital-003", name: "Rajasthan State Hospital", type: "hospital", latitude: 26.9124, longitude: 75.7873, capacity: 400, occupied: 180, status: "operational", state: "Rajasthan", district: "Jaipur" },
+  { id: "relief-001", name: "NDRF Relief Center", type: "relief", latitude: 22.5726, longitude: 88.3639, capacity: 800, occupied: 350, status: "active", state: "West Bengal", district: "Kolkata" },
+  { id: "relief-002", name: "State Disaster Relief Hub", type: "relief", latitude: 13.0827, longitude: 80.2707, capacity: 600, occupied: 200, status: "active", state: "Tamil Nadu", district: "Chennai" },
+  { id: "food-001", name: "Central Food Distribution Point", type: "food", latitude: 28.6139, longitude: 77.2090, capacity: 2000, occupied: 0, status: "active", state: "Delhi", district: "New Delhi" },
+  { id: "food-002", name: "Community Kitchen Center", type: "food", latitude: 9.9312, longitude: 76.2673, capacity: 1500, occupied: 0, status: "active", state: "Kerala", district: "Ernakulam" },
+  { id: "food-003", name: "Flood Relief Kitchen", type: "food", latitude: 25.6093, longitude: 85.1376, capacity: 1000, occupied: 0, status: "active", state: "Bihar", district: "Patna" },
+  { id: "disaster-001", name: "Flood Affected Zone - Brahmaputra", type: "disaster", latitude: 26.7465, longitude: 94.2026, severity: "high", status: "active", state: "Assam", district: "Jorhat" },
+  { id: "disaster-002", name: "Cyclone Impact Area", type: "disaster", latitude: 20.2961, longitude: 85.8245, severity: "critical", status: "active", state: "Odisha", district: "Bhubaneswar" },
+  { id: "disaster-003", name: "Landslide Warning Zone", type: "disaster", latitude: 30.3165, longitude: 78.0322, severity: "moderate", status: "monitoring", state: "Uttarakhand", district: "Dehradun" },
+  { id: "shelter-004", name: "Cyclone Shelter Visakhapatnam", type: "shelter", latitude: 17.6868, longitude: 83.2185, capacity: 700, occupied: 120, status: "available", state: "Andhra Pradesh", district: "Visakhapatnam" }
+];

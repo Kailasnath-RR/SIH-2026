@@ -7,7 +7,10 @@
   <meta name="description" content="Location-aware geographic climate analysis and parametric architectural shelter generator for India.">
   <link rel="stylesheet" href="style.css?v=40">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
   <script type="module" src="src/app.js?v=40" defer></script>
 </head>
@@ -109,6 +112,15 @@
             <label class="disabled-layer"><input type="checkbox" disabled> Roads <span class="badge badge-warning">Data source required</span></label>
             <label class="disabled-layer"><input type="checkbox" disabled> Forest <span class="badge badge-warning">Data source required</span></label>
           </div>
+
+          <div class="layer-groups">
+            <h3>Facility Markers</h3>
+            <label><input type="checkbox" data-facility="shelter" checked> 🏠 Shelters</label>
+            <label><input type="checkbox" data-facility="hospital" checked> 🏥 Hospitals</label>
+            <label><input type="checkbox" data-facility="relief" checked> ➕ Relief Centers</label>
+            <label><input type="checkbox" data-facility="food" checked> 🍲 Food Distribution</label>
+            <label><input type="checkbox" data-facility="disaster" checked> ⚠️ Disaster Zones</label>
+          </div>
         </aside>
 
         <div class="map-panel glass">
@@ -118,6 +130,7 @@
               <span id="mapSubline">Hover polygons for state climate data. Click state or city to zoom.</span>
             </div>
             <div class="map-zoom-actions">
+              <button id="myLocationBtn" type="button" title="Go to my location">📍 My Location</button>
               <button id="zoomInMap" type="button" title="Zoom in">+</button>
               <button id="zoomOutMap" type="button" title="Zoom out">−</button>
               <button id="resetMap" type="button">Reset View</button>
@@ -135,14 +148,9 @@
           <p class="eyebrow">Selected Site Intelligence</p>
           <h2 id="selectedName">Guwahati</h2>
           <div id="selectedProvenance" class="provenance-container"></div>
-          <dl class="site-meta">
-            <div><dt>State</dt><dd id="selectedState">Assam</dd></div>
-            <div><dt>District</dt><dd id="selectedDistrict">Kamrup Metropolitan</dd></div>
-            <div><dt>Latitude</dt><dd id="selectedLat">26.1445</dd></div>
-            <div><dt>Longitude</dt><dd id="selectedLng">91.7362</dd></div>
-            <div><dt>Elevation</dt><dd id="selectedElev">55 m</dd></div>
-            <div><dt>Climate Zone</dt><dd id="selectedClimate">humid subtropical</dd></div>
-          </dl>
+          <div id="siteIntelligenceContent">
+            <!-- Dynamic site intelligence data goes here -->
+          </div>
           <button id="analyzeButton" class="primary-action wide" type="button">Analyze & Generate 3D Shelter</button>
         </aside>
       </div>

@@ -15,6 +15,29 @@ export const apiClient = {
     }
   },
 
+  async geocodeSearch(query) {
+    try {
+      const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return data.results || [];
+    } catch (e) {
+      console.warn("API geocode search error:", e);
+      return [];
+    }
+  },
+
+  async getSiteIntelligence(lat, lng) {
+    try {
+      const res = await fetch(`/api/site-intelligence?lat=${lat}&lng=${lng}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      console.warn("API site intelligence error:", e);
+      return null;
+    }
+  },
+
   async getHourlyClimate(location) {
     try {
       const res = await fetch(`/api/climate/hourly?lat=${location.lat}&lng=${location.lng}&name=${encodeURIComponent(location.name)}`);
