@@ -78,6 +78,21 @@ function serveStatic(req, res) {
 
   fs.readFile(resolved, (error, content) => {
     if (error) {
+      if (!path.extname(resolved)) {
+        fs.readFile(path.join(ROOT, "index.html"), (err, indexContent) => {
+          if (err) {
+            res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+            res.end("Not found");
+            return;
+          }
+          res.writeHead(200, {
+            "Content-Type": "text/html; charset=utf-8",
+            "Cache-Control": "no-store"
+          });
+          res.end(indexContent);
+        });
+        return;
+      }
       res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
       res.end("Not found");
       return;
@@ -275,16 +290,15 @@ const server = http.createServer(async (req, res) => {
 });
 
 function listen(port) {
-  server.once("error", error => {
-    if (error.code === "EADDRINUSE") {
-      listen(port + 1);
-      return;
-    }
-    throw error;
-  });
-
   server.listen(port, () => {
     console.log(`SHELTR.AI v2.2 running at http://localhost:${port}`);
+  });
+  server.on("error", (error) => {
+    if (error.code === "EADDRINUSE") {
+      console.error(`Port ${port} is already in use. Please kill the existing server and try again.`);
+      process.exit(1);
+    }
+    throw error;
   });
 }
 

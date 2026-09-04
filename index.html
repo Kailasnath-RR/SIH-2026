@@ -6,6 +6,9 @@
   <title>SHELTR.AI | Geographic Climate Analysis & Parametric Shelter Generator</title>
   <meta name="description" content="Location-aware geographic climate analysis and parametric architectural shelter generator for India.">
   <link rel="stylesheet" href="style.css?v=40">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
@@ -15,32 +18,31 @@
   <script type="module" src="src/app.js?v=40" defer></script>
 </head>
 <body>
+  <div class="grain-overlay" aria-hidden="true"></div>
   <div class="ambient-grid" aria-hidden="true"></div>
 
   <header class="topbar">
-    <a class="brand" href="#explore" aria-label="SHELTR.AI home">
+    <a class="brand" href="/explore" aria-label="SHELTR.AI home">
       <span class="brand-mark"></span>
       <span>SHELTR<span>.AI</span></span>
     </a>
     <nav class="nav-links" aria-label="Primary navigation">
-      <a href="#explore" class="active">1. Explore Map</a>
-      <a href="#analyze">2. Analyze</a>
-      <a href="#design">3. Design</a>
-      <a href="#studio">4. 3D Studio</a>
-      <a href="#reports">5. Reports</a>
-      <a href="#limitations">6. Limitations</a>
+      <a href="/explore" class="active" data-nav="explore">1. Explore Map</a>
+      <a href="/analyze" data-nav="analyze">2. Analyze</a>
+      <a href="/design" data-nav="design">3. Design</a>
+      <a href="/studio" data-nav="studio">4. 3D Studio</a>
+      <a href="/reports" data-nav="reports">5. Reports</a>
     </nav>
     <div class="system-strip" aria-label="System status">
-      <span id="navLocation">Guwahati</span>
-      <span class="status-dot"></span>
-      <span id="systemDataBadge" class="badge badge-success">Open-Meteo + Demo Fallback</span>
-      <span class="ai-pill">GIS + 3D Engine</span>
+      <button id="themeToggle" class="nav-cta-btn" style="padding: 0.5rem 1rem; border-radius: 999px; display: flex; align-items: center; justify-content: center;" aria-label="Toggle Theme">
+        <span id="themeIcon">☀️</span>
+      </button>
     </div>
   </header>
 
   <main>
     <!-- HERO SECTION -->
-    <section class="hero-section" id="explore">
+    <section class="hero-section reveal-up" id="explore">
       <div class="india-orbit" aria-hidden="true">
         <svg viewBox="0 0 320 360" role="img" aria-label="Animated India geographic visualization">
           <path d="M138 24 176 47 195 83 233 95 255 128 238 164 252 199 222 226 215 270 179 294 159 338 126 304 90 281 74 244 45 215 61 181 53 135 88 101 63Z"></path>
@@ -66,21 +68,8 @@
       </aside>
     </section>
 
-    <!-- WORKFLOW STRIP -->
-    <div class="workflow-strip glass">
-      <div class="step active"><span>1</span> Location Map</div>
-      <div class="step-line"></div>
-      <div class="step"><span>2</span> Climate Analysis</div>
-      <div class="step-line"></div>
-      <div class="step"><span>3</span> Design Engine</div>
-      <div class="step-line"></div>
-      <div class="step"><span>4</span> Parametric 3D Studio</div>
-      <div class="step-line"></div>
-      <div class="step"><span>5</span> Report Export</div>
-    </div>
-
     <!-- MAP WORKSPACE -->
-    <section class="map-workspace" id="mapWorkspace" aria-labelledby="mapTitle">
+    <section class="map-workspace reveal-up" id="mapWorkspace" aria-labelledby="mapTitle">
       <div class="section-heading">
         <p class="eyebrow">Geographic Explorer</p>
         <h2 id="mapTitle">India GIS Location Explorer</h2>
@@ -159,7 +148,7 @@
     </section>
 
     <!-- ANALYSIS WORKSPACE -->
-    <section class="analysis-section" id="analyze">
+    <section class="analysis-section reveal-up" id="analyze">
       <div class="section-heading">
         <p class="eyebrow">Calculated Engineering Metrics</p>
         <h2>Environmental Comfort & Stress Analysis</h2>
@@ -199,8 +188,8 @@
       </div>
     </section>
 
-    <!-- DESIGN BRIEF & RULES WORKSPACE -->
-    <section class="design-section" id="design">
+    <!-- DESIGN ENGINE WORKSPACE -->
+    <section class="design-section reveal-up" id="design">
       <div class="section-heading">
         <p class="eyebrow">Rule-Based Decision Support Engine</p>
         <h2>Climate-Responsive Design Rationale</h2>
@@ -220,7 +209,7 @@
     </section>
 
     <!-- PARAMETRIC 3D SHELTER GENERATOR -->
-    <section class="studio-section" id="studio">
+    <section class="studio-section reveal-up" id="studio">
       <div class="section-heading">
         <p class="eyebrow">Coherent Architectural Generator</p>
         <h2>Parametric 3D Shelter Studio</h2>
@@ -274,7 +263,7 @@
     </section>
 
     <!-- REPORTS & COMPARISON WORKSPACE -->
-    <section class="reports-section" id="reports">
+    <section class="reports-section reveal-up" id="reports">
       <div class="section-heading">
         <p class="eyebrow">Comparison & Export</p>
         <h2>Multi-Location Comparison & HTML Report</h2>
@@ -299,33 +288,6 @@
         </div>
       </div>
     </section>
-
-    <!-- LIMITATIONS SECTION -->
-    <section class="limitations-section" id="limitations">
-      <div class="section-heading">
-        <p class="eyebrow">Model Scope & Limitations</p>
-        <h2>Engineering Scope & Disclaimers</h2>
-        <p>SHELTR.AI provides conceptual decision support. It does not replace site-specific structural or mechanical engineering validation.</p>
-      </div>
-
-      <div class="limitations-grid glass">
-        <div class="lim-card">
-          <h3>GIS & Boundary Data</h3>
-          <p>State polygons and boundaries are rendered from bundled GeoJSON dataset. Custom coordinates inherit regional centroid climate profiles when unlisted.</p>
-        </div>
-        <div class="lim-card">
-          <h3>Thermal Comfort Model</h3>
-          <p>Thermal comfort scoring uses a 5-factor Steadman Heat Index heuristic model. It is NOT an ASHRAE-55 or ISO-7730 PMV calculation.</p>
-        </div>
-        <div class="lim-card">
-          <h3>3D Parametric Model</h3>
-          <p>The 3D studio visualizes architectural parameters (louvers, gables, eaves, stilts, materials) and conceptual climate flow vectors. It is NOT a CFD or FEA physics simulation.</p>
-        </div>
-        <div class="lim-card">
-          <h3>Structural Safety</h3>
-          <p>Material suitability and structural bracing rules are indicative guidelines. Construction requires site soil testing and certified structural sign-off.</p>
-        </div>
-      </div>
     </section>
   </main>
 

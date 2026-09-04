@@ -98,7 +98,8 @@ function bindGlobalEvents() {
   if (analyzeBtn) {
     analyzeBtn.addEventListener("click", () => {
       analyzeCurrentLocation();
-      window.location.hash = "analyze";
+      history.pushState(null, '', '/analyze');
+      updateRoute('/analyze');
     });
   }
 
@@ -152,6 +153,26 @@ function bindGlobalEvents() {
     beforeAfterBtn.classList.toggle("active", appState.beforeAfter);
     updateShelterGeometry();
   });
+
+  const themeToggle = $("themeToggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const root = document.documentElement;
+      const isDark = root.getAttribute("data-theme") === "dark";
+      const newTheme = isDark ? "light" : "dark";
+      
+      if (newTheme === "dark") {
+        root.setAttribute("data-theme", "dark");
+        $("themeIcon").textContent = "🌙";
+      } else {
+        root.removeAttribute("data-theme");
+        $("themeIcon").textContent = "☀️";
+      }
+      
+      localStorage.setItem("sheltrTheme", newTheme);
+      window.dispatchEvent(new CustomEvent("themeChanged", { detail: { theme: newTheme } }));
+    });
+  }
 }
 
 async function handleSearch() {
@@ -184,8 +205,99 @@ async function handleSearch() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initMap();
+function updateRoute(path) {
+  if (path === '/') path = '/explore';
+  
+  const routeMap = {
+    '/explore': ['explore', 'mapWorkspace'],
+    '/analyze': ['analyze'],
+    '/design': ['design'],
+    '/studio': ['studio'],
+    '/reports': ['reports']
+  };
+
+  const activeSections = routeMap[path] || routeMap['/explore'];
+  
+  ['explore', 'mapWorkspace', 'analyze', 'design', 'studio', 'reports'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (activeSections.includes(id)) {
+        el.classList.remove('page-hidden');
+      } else {
+        el.classList.add('page-hidden');
+      }
+    }
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    if (a.getAttribute('href') === path) {
+      a.classList.add('active');
+    } else {
+      a.classList.remove('active');
+    }
+  });
+  
+  window.scrollTo(0, 0);
+
+  // Trigger resize slightly after paint so 3D canvas can adapt if its container just became visible
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+
+  // Auto-analyze if user skipped clicking the "Analyze" button and just used the topbar
+  const needsAnalysis = !appState.analysis || (appState.analysis.location && appState.selectedLocation && (appState.analysis.location.lat !== appState.selectedLocation.lat || appState.analysis.location.lng !== appState.selectedLocation.lng));
+  
+  if ((path === '/analyze' || path === '/design' || path === '/studio' || path === '/reports') && needsAnalysis && appState.selectedLocation) {
+    analyzeCurrentLocation();
+  }
+}
+
+function initRouter() {
+  document.body.addEventListener('click', e => {
+    const link = e.target.closest('a');
+    if (link && link.getAttribute('href') && link.getAttribute('href').startsWith('/')) {
+      e.preventDefault();
+      const path = link.getAttribute('href');
+      history.pushState(null, '', path);
+      updateRoute(path);
+    }
+  });
+
+  window.addEventListener('popstate', () => {
+    updateRoute(window.location.pathname);
+  });
+
+  updateRoute(window.location.pathname);
+}
+
+function initRevealAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+  document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem("sheltrTheme");
+  const root = document.documentElement;
+  
+  if (savedTheme === "dark") {
+    root.setAttribute("data-theme", "dark");
+    if ($("themeIcon")) $("themeIcon").textContent = "🌙";
+  } else {
+    root.removeAttribute("data-theme");
+    if ($("themeIcon")) $("themeIcon").textContent = "☀️";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  initTheme();
+  initRevealAnimations();
+  initRouter();
+  await initMap();
   renderSiteContextInputs();
   bindGlobalEvents();
   populateComparisonOptions();
@@ -193,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initReportExport();
 
   // Initial Location: Visakhapatnam
-  selectCoordinates(17.6868, 83.2185, 12);
+  await selectCoordinates(17.6868, 83.2185, 12);
 
   analyzeCurrentLocation();
 

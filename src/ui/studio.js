@@ -70,6 +70,13 @@ export function initStudio() {
     appState.three.distance = Math.max(5.4, Math.min(14.0, appState.three.distance + e.deltaY * 0.006));
   }, { passive: false });
 
+  window.addEventListener('resize', () => {
+    if (!canvas || canvas.clientWidth === 0) return;
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+  });
+
   animate();
   updateShelterGeometry();
 }
@@ -128,12 +135,19 @@ export async function updateShelterGeometry() {
   const buildingH = 2.0;
   const raisedH = activeRaised ? 0.85 : 0.12;
 
-  // Materials
+  // Materials (Theme Aware)
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  
+  const frameColor = isDark ? 0x93a7af : 0x78716C;
+  const glassColor = isDark ? 0x55e5d3 : 0xFFB7B2;
+  const roofColor = isDark ? 0x77a7ff : 0xEFEDF4;
+  const groundColor = isDark ? 0x09111a : 0xE8EFE8;
+
   const wallMat = createMaterial(activeMatName);
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0x3a4b53, roughness: 0.5 });
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0x55e5d3, transparent: true, opacity: 0.4, roughness: 0.1 });
-  const roofMat = new THREE.MeshStandardMaterial({ color: 0x4a7c9d, roughness: 0.5, metalness: 0.1 });
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0x12222d, roughness: 0.9 });
+  const frameMat = new THREE.MeshStandardMaterial({ color: frameColor, roughness: 0.5 });
+  const glassMat = new THREE.MeshStandardMaterial({ color: glassColor, transparent: true, opacity: 0.3, roughness: 0.1 });
+  const roofMat = new THREE.MeshStandardMaterial({ color: roofColor, roughness: 0.5, metalness: 0.1 });
+  const groundMat = new THREE.MeshStandardMaterial({ color: groundColor, roughness: 0.9 });
 
   // 1. Ground Plane with Compass Rose Styling
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), groundMat);
@@ -356,3 +370,9 @@ function animate() {
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
+
+window.addEventListener("themeChanged", () => {
+  if (appState.three && appState.three.scene) {
+    updateShelterGeometry();
+  }
+});
