@@ -11,7 +11,7 @@ const elevationService = require("./elevationService");
 function fetchJson(url) {
   const mod = url.startsWith("https") ? https : http;
   return new Promise((resolve, reject) => {
-    mod.get(url, { headers: { "User-Agent": "SHELTR-AI/2.2 (disaster-management-platform)" } }, (res) => {
+    const req = mod.get(url, { headers: { "User-Agent": "SHELTR-AI/2.2 (disaster-management-platform)" }, timeout: 4000 }, (res) => {
       if (res.statusCode < 200 || res.statusCode >= 300) {
         return reject(new Error(`HTTP ${res.statusCode}`));
       }
@@ -20,7 +20,9 @@ function fetchJson(url) {
       res.on("end", () => {
         try { resolve(JSON.parse(body)); } catch (e) { reject(e); }
       });
-    }).on("error", reject);
+    });
+    req.on("timeout", () => { req.destroy(); reject(new Error("Request timed out")); });
+    req.on("error", reject);
   });
 }
 

@@ -214,8 +214,8 @@ export async function initMap() {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(leafletMap);
 
-  // Apply dark theme filter to the tile pane so OSM tiles match the dark UI
-  leafletMap.getPane("tilePane").style.filter = "brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7)";
+  // Apply light theme filter to soften OpenStreetMap tiles
+  // leafletMap.getPane("tilePane").style.filter = "saturate(0.6) brightness(1.05) contrast(0.95)";
 
   cityMarkersLayer = L.layerGroup().addTo(leafletMap);
 

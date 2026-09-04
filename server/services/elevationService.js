@@ -2,7 +2,7 @@ const https = require("https");
 
 function fetchJson(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const req = https.get(url, { headers: { "User-Agent": "SHELTR-AI/2.2" }, timeout: 4000 }, (res) => {
       if (res.statusCode < 200 || res.statusCode >= 300) {
         return reject(new Error(`HTTP ${res.statusCode}`));
       }
@@ -15,7 +15,9 @@ function fetchJson(url) {
           reject(e);
         }
       });
-    }).on("error", reject);
+    });
+    req.on("timeout", () => { req.destroy(); reject(new Error("Request timed out")); });
+    req.on("error", reject);
   });
 }
 
